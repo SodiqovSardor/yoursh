@@ -15,7 +15,7 @@ if (typeof WebSocket === 'undefined') {
 }
 
 // ponytail: script allocates a pty so tmux is happy; no node-pty (no native build)
-const child = spawn('script', ['-qfc', 'tmux new -A -s ' + tmux, '/dev/null'], {
+const child = spawn('script', ['-qffc', 'tmux new -A -s ' + tmux, '/dev/null'], {
   stdio: ['pipe', 'pipe', 'pipe'],
 })
 
