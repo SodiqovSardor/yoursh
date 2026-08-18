@@ -18,7 +18,7 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
   ws.binaryType = 'arraybuffer'
 
   ws.onopen = () => {
-    term.writeln('\r\nConnecting to SSH…\r\n')
+    term.writeln('\r\nConnecting…\r\n')
     ws.send(JSON.stringify({ type: 'connect', ...config, cols: term.cols, rows: term.rows }))
   }
   ws.onmessage = (e) => {

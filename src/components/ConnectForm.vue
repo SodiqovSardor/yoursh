@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 import type { SshConfig } from '../types'
 
 const emit = defineEmits<{ (e: 'connect', cfg: SshConfig): void }>()
-const mode = ref<'phone' | 'ssh'>('phone')
+const mode = ref<'local' | 'phone' | 'ssh'>('local')
 
 const form = reactive<SshConfig>({
   host: '',
@@ -20,7 +20,8 @@ const WSS = ORIGIN.replace(/^http/, 'ws')
 const cmd = `pkg install -y nodejs tmux util-linux && curl -s ${ORIGIN}/agent.js | node - ${pairId} ${WSS}`
 
 function connect() {
-  if (mode.value === 'phone') emit('connect', { ...form, mode: 'agent', session: pairId })
+  if (mode.value === 'local') emit('connect', { ...form, mode: 'local' })
+  else if (mode.value === 'phone') emit('connect', { ...form, mode: 'agent', session: pairId })
   else emit('connect', { ...form, mode: 'ssh' })
 }
 
@@ -33,11 +34,17 @@ function copy() {
   <form class="connect" @submit.prevent="connect">
     <h1>YourSH</h1>
     <div class="tabs">
-      <button type="button" :class="{ on: mode === 'phone' }" @click="mode = 'phone'">Phone (Termux)</button>
+      <button type="button" :class="{ on: mode === 'local' }" @click="mode = 'local'">Local</button>
+      <button type="button" :class="{ on: mode === 'phone' }" @click="mode = 'phone'">Phone</button>
       <button type="button" :class="{ on: mode === 'ssh' }" @click="mode = 'ssh'">SSH</button>
     </div>
 
-    <template v-if="mode === 'phone'">
+    <template v-if="mode === 'local'">
+      <p>Runs tmux <b>on this device</b> and streams to your browser. No paste needed.</p>
+      <label>tmux session<input v-model="form.session" placeholder="yoursh" /></label>
+    </template>
+
+    <template v-else-if="mode === 'phone'">
       <p>Paste this in Termux, then hit Connect:</p>
       <pre class="cmd">{{ cmd }}</pre>
       <button type="button" class="copy" @click="copy">Copy command</button>

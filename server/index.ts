@@ -2,6 +2,7 @@ import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
 import { extname, join, normalize } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { spawn } from 'node:child_process'
 import { WebSocketServer, WebSocket } from 'ws'
 import { connectSsh, resizeSsh, inputSsh } from './ssh'
 
@@ -70,6 +71,17 @@ const pair = (id: string, role: 'agent' | 'browser', ws: WebSocket) => {
   sessions.set(id, e)
 }
 
+// Backend + tmux on the same device: spawn directly, no agent hop.
+function spawnLocal(ws: WebSocket, session: string) {
+  const child = spawn('script', ['-qffc', 'tmux new -A -s ' + session, '/dev/null'], {
+    stdio: ['pipe', 'pipe', 'pipe'],
+  })
+  ;(ws as any).child = child
+  child.stdout.on('data', (d) => { if (ws.readyState === WebSocket.OPEN) ws.send(d) })
+  child.stderr.on('data', (d) => { if (ws.readyState === WebSocket.OPEN) ws.send(d) })
+  child.on('exit', () => ws.close())
+}
+
 // Single WS server; route by path.
 const wss = new WebSocketServer({ server })
 wss.on('connection', (ws, req) => {
@@ -112,6 +124,11 @@ wss.on('connection', (ws, req) => {
         if (!sessions.get(msg.session)?.agent) ws.send(JSON.stringify({ type: 'waiting' }))
         return
       }
+      if (msg.mode === 'local') {
+        meta.mode = 'local'
+        spawnLocal(ws, msg.session || 'yoursh')
+        return
+      }
       meta.mode = 'ssh'
       return connectSsh(ws, msg)
     }
@@ -119,6 +136,12 @@ wss.on('connection', (ws, req) => {
     if (meta.mode === 'agent') {
       const a = sessions.get(meta.session)?.agent
       if (a && a.readyState === WebSocket.OPEN) a.send(text)
+      return
+    }
+
+    if (meta.mode === 'local') {
+      if (msg?.type === 'resize') return
+      ;(ws as any).child?.stdin.write(typeof data === 'string' ? Buffer.from(data) : data)
       return
     }
 
@@ -135,6 +158,7 @@ wss.on('connection', (ws, req) => {
     } else {
       ;(ws as any).stream?.end?.()
     }
+    ;(ws as any).child?.kill?.()
   })
 })
 
