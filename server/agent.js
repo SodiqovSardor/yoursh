@@ -14,14 +14,26 @@ if (typeof WebSocket === 'undefined') {
   process.exit(1)
 }
 
-const ws = new WebSocket(base + '/agent?session=' + id)
 // ponytail: script allocates a pty so tmux is happy; no node-pty (no native build)
 const child = spawn('script', ['-qfc', 'tmux new -A -s ' + tmux, '/dev/null'], {
   stdio: ['pipe', 'pipe', 'pipe'],
 })
 
+const ws = new WebSocket(base + '/agent?session=' + id)
+ws.binaryType = 'nodebuffer'
+
+ws.addEventListener('open', () => console.log('connected to YourSH'))
+ws.addEventListener('message', (ev) => {
+  const d = ev.data
+  if (typeof d === 'string') {
+    try {
+      if (JSON.parse(d).type === 'resize') return // ignore resize control
+    } catch {}
+  }
+  child.stdin.write(typeof d === 'string' ? Buffer.from(d) : Buffer.from(d))
+})
+ws.addEventListener('error', (e) => console.log('ws error:', e.message || e))
+
 child.stdout.on('data', (d) => { if (ws.readyState === 1) ws.send(d) })
 child.stderr.on('data', (d) => { if (ws.readyState === 1) ws.send(d) })
-ws.on('message', (d) => child.stdin.write(typeof d === 'string' ? Buffer.from(d) : d))
 child.on('exit', () => ws.close())
-ws.on('open', () => console.log('connected to YourSH'))
