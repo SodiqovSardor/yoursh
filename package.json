@@ -1,0 +1,30 @@
+{
+  "name": "yoursh",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "server": "tsx server/index.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
+    "ssh2": "^1.16.0",
+    "tsx": "^4.19.0",
+    "typescript": "~6.0.2",
+    "vue": "^3.5.40",
+    "vite": "^8.2.0",
+    "vue-tsc": "^3.3.8",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/ssh2": "^1.15.1",
+    "@types/ws": "^8.5.0",
+    "@vue/tsconfig": "^0.9.1"
+  }
+}
