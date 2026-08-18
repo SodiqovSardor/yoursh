@@ -28,6 +28,8 @@ export function connectSsh(ws: WebSocket, cfg: any) {
     port: cfg.port || 22,
     username: cfg.username,
     password: cfg.password,
+    readyTimeout: 20000,
+    connectTimeout: 15000,
   })
 }
 
