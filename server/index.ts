@@ -8,6 +8,7 @@ import { connectSsh, resizeSsh, inputSsh } from './ssh'
 const PORT = Number(process.env.PORT) || 3000
 const DIST = fileURLToPath(new URL('../dist', import.meta.url))
 const AGENT_PY = fileURLToPath(new URL('./agent.py', import.meta.url))
+const AGENT_JS = fileURLToPath(new URL('./agent.js', import.meta.url))
 
 const MIME: Record<string, string> = {
   '.html': 'text/html',
@@ -26,6 +27,15 @@ const server = createServer(async (req, res) => {
     try {
       const data = await readFile(AGENT_PY)
       res.writeHead(200, { 'content-type': 'text/x-python' })
+      return res.end(data)
+    } catch {
+      /* fall through to 404 */
+    }
+  }
+  if (url === '/agent.js') {
+    try {
+      const data = await readFile(AGENT_JS)
+      res.writeHead(200, { 'content-type': 'text/javascript' })
       return res.end(data)
     } catch {
       /* fall through to 404 */

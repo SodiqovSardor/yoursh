@@ -17,7 +17,7 @@ const form = reactive<SshConfig>({
 const pairId = Math.random().toString(36).slice(2, 8)
 const ORIGIN = location.origin
 const WSS = ORIGIN.replace(/^http/, 'ws')
-const cmd = `pkg install -y python tmux && pip install -q websocket-client && curl -s ${ORIGIN}/agent.py | python3 - ${pairId} ${WSS}`
+const cmd = `pkg install -y nodejs tmux util-linux && curl -s ${ORIGIN}/agent.js | node - ${pairId} ${WSS}`
 
 function connect() {
   if (mode.value === 'phone') emit('connect', { ...form, mode: 'agent', session: pairId })
