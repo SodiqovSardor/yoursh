@@ -4,4 +4,5 @@ export interface SshConfig {
   username: string
   password: string
   session?: string
+  mode?: 'ssh' | 'agent'
 }

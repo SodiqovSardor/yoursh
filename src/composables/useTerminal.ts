@@ -26,6 +26,8 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
       let msg: any
       try { msg = JSON.parse(e.data) } catch { msg = null }
       if (msg?.type === 'error') term.writeln(`\r\n\x1b[31m${msg.msg}\x1b[0m`)
+      else if (msg?.type === 'waiting')
+        term.writeln('\r\nWaiting for terminal to connect… run the command in Termux.\r\n')
       return
     }
     term.write(new Uint8Array(e.data))

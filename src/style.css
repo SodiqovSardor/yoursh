@@ -28,6 +28,43 @@ body {
   font-size: 14px;
 }
 
+.tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.tabs button.on {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+}
+
+.cmd {
+  background: #111;
+  color: #0f0;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+}
+
+.copy {
+  background: #eee;
+  color: #111;
+}
+
 .connect label {
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import type { SshConfig } from '../types'
 
 const emit = defineEmits<{ (e: 'connect', cfg: SshConfig): void }>()
+const mode = ref<'phone' | 'ssh'>('phone')
 
 const form = reactive<SshConfig>({
   host: '',
@@ -11,18 +12,44 @@ const form = reactive<SshConfig>({
   password: '',
   session: 'yoursh',
 })
+
+// ponytail: random pairing id, embedded in the command the phone runs
+const pairId = Math.random().toString(36).slice(2, 8)
+const ORIGIN = location.origin
+const WSS = ORIGIN.replace(/^http/, 'ws')
+const cmd = `pkg install -y python tmux && pip install -q websocket-client && curl -s ${ORIGIN}/agent.py | python3 - ${pairId} ${WSS}`
+
+function connect() {
+  if (mode.value === 'phone') emit('connect', { ...form, mode: 'agent', session: pairId })
+  else emit('connect', { ...form, mode: 'ssh' })
+}
+
+function copy() {
+  navigator.clipboard.writeText(cmd)
+}
 </script>
 
 <template>
-  <form class="connect" @submit.prevent="emit('connect', { ...form })">
+  <form class="connect" @submit.prevent="connect">
     <h1>YourSH</h1>
-    <p>SSH into a host and attach a tmux session.</p>
+    <div class="tabs">
+      <button type="button" :class="{ on: mode === 'phone' }" @click="mode = 'phone'">Phone (Termux)</button>
+      <button type="button" :class="{ on: mode === 'ssh' }" @click="mode = 'ssh'">SSH</button>
+    </div>
 
-    <label>Host<input v-model="form.host" required placeholder="192.168.1.10" /></label>
-    <label>Port<input v-model.number="form.port" type="number" required /></label>
-    <label>Username<input v-model="form.username" required /></label>
-    <label>Password<input v-model="form.password" type="password" required /></label>
-    <label>tmux session<input v-model="form.session" placeholder="yoursh" /></label>
+    <template v-if="mode === 'phone'">
+      <p>Paste this in Termux, then hit Connect:</p>
+      <pre class="cmd">{{ cmd }}</pre>
+      <button type="button" class="copy" @click="copy">Copy command</button>
+    </template>
+
+    <template v-else>
+      <label>Host<input v-model="form.host" required placeholder="1.2.3.4" /></label>
+      <label>Port<input v-model.number="form.port" type="number" required /></label>
+      <label>Username<input v-model="form.username" required /></label>
+      <label>Password<input v-model="form.password" type="password" required /></label>
+      <label>tmux session<input v-model="form.session" placeholder="yoursh" /></label>
+    </template>
 
     <button type="submit">Connect</button>
   </form>
