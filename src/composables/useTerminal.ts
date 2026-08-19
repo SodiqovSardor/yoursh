@@ -12,9 +12,20 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
   const fit = new FitAddon()
   term.loadAddon(fit)
   term.open(container)
-  fit.fit()
-  requestAnimationFrame(() => fit.fit())
-  setTimeout(() => fit.fit(), 100)
+  const fit = new FitAddon()
+  term.loadAddon(fit)
+  // bulletproof: force container to viewport via JS too (don't trust CSS timing)
+  container.style.position = 'absolute'
+  container.style.top = '0'
+  container.style.left = '0'
+  container.style.width = '100vw'
+  container.style.height = '100vh'
+  const doFit = () => fit.fit()
+  doFit()
+  requestAnimationFrame(doFit)
+  setTimeout(doFit, 50)
+  setTimeout(doFit, 200)
+  setTimeout(doFit, 500)
 
   const ws = new WebSocket(WS_URL)
   ws.binaryType = 'arraybuffer'
