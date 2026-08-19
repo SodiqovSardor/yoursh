@@ -12,13 +12,13 @@
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.8",
-    "@xterm/addon-fit": "^0.10.0",
-    "@xterm/xterm": "^5.5.0",
+    "@wterm/dom": "^0.3.4",
+    "@wterm/vue": "^0.3.4",
     "ssh2": "^1.16.0",
     "tsx": "^4.19.0",
     "typescript": "~6.0.2",
-    "vue": "^3.5.40",
     "vite": "^8.2.0",
+    "vue": "^3.5.40",
     "vue-tsc": "^3.3.8",
     "ws": "^8.18.0"
   },

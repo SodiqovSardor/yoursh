@@ -2,58 +2,210 @@ html,
 body,
 #app {
   height: 100%;
+  width: 100%;
   margin: 0;
+  padding: 0;
 }
 
 body {
   margin: 0;
-  background: #fff;
+  background: #0a0a0d;
+  color: #ddd;
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+/* ---------- desktop ---------- */
+.desktop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(1200px 800px at 72% 8%, #16203a 0%, transparent 60%),
+    radial-gradient(1000px 700px at 8% 92%, #2a1530 0%, transparent 55%),
+    #0a0a0d;
+  overflow: hidden;
+}
+
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  background: rgba(18, 18, 24, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #26262f;
+  z-index: 900;
+}
+.logo {
+  color: #7cc4ff;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+}
+.hint {
+  color: #666;
+  font-size: 12px;
+}
+.newbtn {
+  margin-left: auto;
+  padding: 7px 14px;
+  border: 1px solid #2f6df0;
+  border-radius: 7px;
+  background: #2f6df0;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+.newbtn:hover {
+  background: #245ad0;
+}
+
+/* ---------- terminal window ---------- */
+.win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: #0d0d12;
+  border: 1px solid #2a2a33;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+.titlebar {
+  height: 34px;
+  flex: 0 0 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  background: linear-gradient(#20202a, #16161d);
+  border-bottom: 1px solid #2a2a33;
+  cursor: grab;
+  user-select: none;
+}
+.titlebar:active {
+  cursor: grabbing;
+}
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+.title {
+  flex: 1;
+  color: #c8c8d0;
+  font-size: 12px;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.close {
+  border: none;
+  background: transparent;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+.close:hover {
+  background: #ff5f56;
+  color: #fff;
+}
+.body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+/* wterm root fills the body */
+.body > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+.resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, #3a3a45 50%);
+}
+
+/* ---------- connect modal ---------- */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+}
 .connect {
-  max-width: 360px;
-  margin: 8vh auto;
+  margin: 0;
+  width: 92%;
+  max-width: 380px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: #15151c;
+  border: 1px solid #2a2a33;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
-
 .connect h1 {
   margin: 0;
+  font-size: 20px;
 }
-
 .connect p {
   margin: 0 0 8px;
-  color: #555;
-  font-size: 14px;
+  color: #888;
+  font-size: 13px;
 }
-
 .tabs {
   display: flex;
   gap: 6px;
 }
-
 .tabs button {
   flex: 1;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 6px;
-  background: #fff;
+  background: #1d1d25;
+  color: #bbb;
   cursor: pointer;
   font-size: 13px;
 }
-
 .tabs button.on {
-  border-color: #111;
-  background: #111;
+  border-color: #2f6df0;
+  background: #2f6df0;
   color: #fff;
 }
-
 .cmd {
-  background: #111;
-  color: #0f0;
+  background: #0a0a0d;
+  color: #4caf50;
   padding: 12px;
   border-radius: 6px;
   font-size: 12px;
@@ -61,73 +213,31 @@ body {
   word-break: break-all;
   margin: 0;
 }
-
 .copy {
-  background: #eee;
-  color: #111;
+  background: #2a2a33;
+  color: #ddd;
 }
-
 .connect label {
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 13px;
 }
-
 .connect input {
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 6px;
+  background: #0f0f14;
+  color: #eee;
   font-size: 14px;
 }
-
 .connect button,
-.disconnect {
+.connect .newbtn {
   padding: 10px;
   border: none;
   border-radius: 6px;
-  background: #111;
+  background: #2f6df0;
   color: #fff;
   cursor: pointer;
   font-size: 14px;
-}
-
-.term-wrap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-}
-
-.term {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-}
-
-/* force xterm to stretch to the container */
-.term .xterm,
-.term .xterm-viewport,
-.term .xterm-screen {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.term .xterm-viewport {
-  overflow: hidden !important;
-}
-
-.disconnect {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  padding: 6px 12px;
 }
