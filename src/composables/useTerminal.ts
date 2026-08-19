@@ -12,8 +12,6 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
   const fit = new FitAddon()
   term.loadAddon(fit)
   term.open(container)
-  const fit = new FitAddon()
-  term.loadAddon(fit)
   // bulletproof: force container to viewport via JS too (don't trust CSS timing)
   container.style.position = 'absolute'
   container.style.top = '0'
