@@ -14,6 +14,7 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
   term.open(container)
   fit.fit()
   requestAnimationFrame(() => fit.fit())
+  setTimeout(() => fit.fit(), 100)
 
   const ws = new WebSocket(WS_URL)
   ws.binaryType = 'arraybuffer'
