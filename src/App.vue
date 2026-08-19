@@ -7,14 +7,16 @@ import type { SshConfig } from './types'
 type Win = { id: number; config: SshConfig; x: number; y: number; z: number; w: number; h: number }
 const windows = ref<Win[]>([])
 const showForm = ref(false)
+const topId = ref(0)
 let nextId = 1
 let zTop = 10
 
 function spawn(cfg: SshConfig) {
   showForm.value = false
   const n = windows.value.length
+  const id = nextId++
   windows.value.push({
-    id: nextId++,
+    id,
     config: cfg,
     x: 70 + (n % 6) * 34,
     y: 70 + (n % 6) * 34,
@@ -22,11 +24,33 @@ function spawn(cfg: SshConfig) {
     w: Math.min(780, window.innerWidth - 140),
     h: Math.min(480, window.innerHeight - 160),
   })
+  topId.value = id
 }
-function close(id: number) { windows.value = windows.value.filter((w) => w.id !== id) }
-function focus(id: number) { const w = windows.value.find((p) => p.id === id); if (w) w.z = ++zTop }
-function move(id: number, x: number, y: number) { const w = windows.value.find((p) => p.id === id); if (w) { w.x = x; w.y = y } }
-function resize(id: number, w: number, h: number) { const o = windows.value.find((p) => p.id === id); if (o) { o.w = w; o.h = h } }
+function close(id: number) {
+  windows.value = windows.value.filter((w) => w.id !== id)
+  if (topId.value === id) topId.value = windows.value.length ? Math.max(...windows.value.map((w) => w.id)) : 0
+}
+function focus(id: number) {
+  const w = windows.value.find((p) => p.id === id)
+  if (w) {
+    w.z = ++zTop
+    topId.value = id
+  }
+}
+function move(id: number, x: number, y: number) {
+  const w = windows.value.find((p) => p.id === id)
+  if (w) {
+    w.x = x
+    w.y = y
+  }
+}
+function resize(id: number, w: number, h: number) {
+  const o = windows.value.find((p) => p.id === id)
+  if (o) {
+    o.w = w
+    o.h = h
+  }
+}
 
 onMounted(() => {
   // open one terminal immediately (local shell — tmux is opt-in)
@@ -36,12 +60,6 @@ onMounted(() => {
 
 <template>
   <div class="desktop">
-    <div class="topbar">
-      <span class="logo">⌘ YourSH</span>
-      <span class="hint">drag titlebars · resize from corner · spawn more</span>
-      <button class="newbtn" @click="showForm = true">+ New Terminal</button>
-    </div>
-
     <TerminalWindow
       v-for="win in windows"
       :key="win.id"
@@ -51,11 +69,14 @@ onMounted(() => {
       :z="win.z"
       :width="win.w"
       :height="win.h"
+      :focused="win.id === topId"
       @close="close(win.id)"
       @focus="focus(win.id)"
       @move="(p) => move(win.id, p.x, p.y)"
       @resize="(p) => resize(win.id, p.width, p.height)"
     />
+
+    <button class="fab" title="New terminal" @click="showForm = true">+</button>
 
     <div v-if="showForm" class="modal-backdrop" @click.self="showForm = false">
       <ConnectForm @connect="spawn" />

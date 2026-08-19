@@ -1,74 +1,63 @@
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #app {
   height: 100%;
   width: 100%;
   margin: 0;
-  padding: 0;
 }
 
 body {
   margin: 0;
-  background: #0a0a0d;
-  color: #ddd;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background: #0e0e11;
+  color: #e6e6e6;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
   overflow: hidden;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 /* ---------- desktop ---------- */
 .desktop {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   background:
-    radial-gradient(1200px 800px at 72% 8%, #16203a 0%, transparent 60%),
-    radial-gradient(1000px 700px at 8% 92%, #2a1530 0%, transparent 55%),
-    #0a0a0d;
+    radial-gradient(1200px 800px at 50% -10%, #1a1a20 0%, transparent 60%),
+    #0e0e11;
   overflow: hidden;
 }
 
-.topbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 46px;
+/* ---------- floating action button ---------- */
+.fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(30, 30, 34, 0.8);
+  backdrop-filter: blur(12px);
+  color: #e6e6e6;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 0 16px;
-  background: rgba(18, 18, 24, 0.8);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #26262f;
-  z-index: 900;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  z-index: 1200;
 }
-.logo {
-  color: #7cc4ff;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  font-size: 15px;
+.fab:hover {
+  transform: translateY(-2px);
+  background: rgba(42, 42, 48, 0.92);
+  border-color: rgba(255, 255, 255, 0.22);
 }
-.hint {
-  color: #666;
-  font-size: 12px;
-}
-.newbtn {
-  margin-left: auto;
-  padding: 7px 14px;
-  border: 1px solid #2f6df0;
-  border-radius: 7px;
-  background: #2f6df0;
-  color: #fff;
-  font-size: 13px;
-  cursor: pointer;
-}
-.newbtn:hover {
-  background: #245ad0;
+.fab:active {
+  transform: translateY(0);
 }
 
 /* ---------- terminal window ---------- */
@@ -76,45 +65,49 @@ body {
   position: absolute;
   display: flex;
   flex-direction: column;
-  background: #0d0d12;
-  border: 1px solid #2a2a33;
-  border-radius: 10px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  background: rgba(18, 18, 21, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  animation: win-in 0.16s ease-out;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
+.win.focused {
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.6);
+}
+@keyframes win-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .titlebar {
-  height: 34px;
-  flex: 0 0 34px;
+  height: 36px;
+  flex: 0 0 36px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 10px;
-  background: linear-gradient(#20202a, #16161d);
-  border-bottom: 1px solid #2a2a33;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   cursor: grab;
   user-select: none;
 }
 .titlebar:active {
   cursor: grabbing;
 }
-.dots {
-  display: flex;
-  gap: 6px;
-}
-.dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  display: inline-block;
-}
-.dot.red { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27c93f; }
 .title {
   flex: 1;
-  color: #c8c8d0;
+  color: #9a9aa2;
   font-size: 12px;
   font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  letter-spacing: 0.2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -122,14 +115,19 @@ body {
 .close {
   border: none;
   background: transparent;
-  color: #888;
+  color: #6a6a72;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .close:hover {
-  background: #ff5f56;
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 .body {
@@ -137,7 +135,6 @@ body {
   flex: 1 1 auto;
   min-height: 0;
 }
-/* wterm root fills the body */
 .body > div {
   width: 100% !important;
   height: 100% !important;
@@ -146,21 +143,31 @@ body {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   cursor: nwse-resize;
-  background: linear-gradient(135deg, transparent 50%, #3a3a45 50%);
+  background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.16) 50%);
 }
 
 /* ---------- connect modal ---------- */
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1500;
+  animation: fade-in 0.15s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .connect {
   margin: 0;
@@ -168,21 +175,26 @@ body {
   max-width: 380px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: #15151c;
-  border: 1px solid #2a2a33;
-  border-radius: 12px;
-  padding: 20px;
+  gap: 14px;
+  background: rgba(22, 22, 26, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 22px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: win-in 0.16s ease-out;
 }
 .connect h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #f0f0f0;
 }
 .connect p {
-  margin: 0 0 8px;
-  color: #888;
+  margin: 0;
+  color: #8a8a92;
   font-size: 13px;
+  line-height: 1.5;
 }
 .tabs {
   display: flex;
@@ -190,60 +202,73 @@ body {
 }
 .tabs button {
   flex: 1;
-  padding: 8px;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background: #1d1d25;
-  color: #bbb;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #aaa;
   cursor: pointer;
   font-size: 13px;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .tabs button.on {
-  border-color: #2f6df0;
-  background: #2f6df0;
-  color: #fff;
+  background: #fff;
+  color: #111;
+  border-color: #fff;
 }
 .cmd {
-  background: #0a0a0d;
-  color: #4caf50;
+  background: rgba(0, 0, 0, 0.35);
+  color: #7ee787;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 12px;
   white-space: pre-wrap;
   word-break: break-all;
   margin: 0;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
 }
 .copy {
-  background: #2a2a33;
+  background: rgba(255, 255, 255, 0.08);
   color: #ddd;
 }
 .connect label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   font-size: 13px;
+  color: #bdbdc4;
 }
 .connect label.check {
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  color: #bbb;
+  color: #bdbdc4;
 }
 .connect input {
-  padding: 8px;
-  border: 1px solid #333;
-  border-radius: 6px;
-  background: #0f0f14;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
   color: #eee;
   font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.connect input:focus {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 .connect button,
 .connect .newbtn {
-  padding: 10px;
+  padding: 11px;
   border: none;
-  border-radius: 6px;
-  background: #2f6df0;
-  color: #fff;
+  border-radius: 8px;
+  background: #fff;
+  color: #111;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+.connect button:hover {
+  opacity: 0.9;
 }

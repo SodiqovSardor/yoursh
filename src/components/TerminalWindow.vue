@@ -11,6 +11,7 @@ const props = defineProps<{
   z: number
   width: number
   height: number
+  focused: boolean
 }>()
 const emit = defineEmits<{
   close: []
@@ -129,6 +130,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     class="win"
+    :class="{ focused }"
     :style="{ left: x + 'px', top: y + 'px', zIndex: z, width: width + 'px', height: height + 'px' }"
     @pointerdown="emit('focus')"
   >
