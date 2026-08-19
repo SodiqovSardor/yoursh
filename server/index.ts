@@ -71,9 +71,11 @@ const pair = (id: string, role: 'agent' | 'browser', ws: WebSocket) => {
   sessions.set(id, e)
 }
 
-// Backend + tmux on the same device: spawn directly, no agent hop.
-function spawnLocal(ws: WebSocket, session: string) {
-  const child = spawn('script', ['-qffc', 'tmux new -A -s ' + session, '/dev/null'], {
+// Backend + shell on the same device. tmux is OPTIONAL (off by default).
+function spawnLocal(ws: WebSocket, opts: { useTmux?: boolean; session?: string }) {
+  const safe = (s?: string) => (s && s.replace(/[^A-Za-z0-9_-]/g, '')) || 'yoursh'
+  const cmd = opts.useTmux ? `tmux new -A -s ${safe(opts.session)}` : (process.env.SHELL || 'bash')
+  const child = spawn('script', ['-qffc', cmd, '/dev/null'], {
     stdio: ['pipe', 'pipe', 'pipe'],
   })
   ;(ws as any).child = child
@@ -126,7 +128,7 @@ wss.on('connection', (ws, req) => {
       }
       if (msg.mode === 'local') {
         meta.mode = 'local'
-        spawnLocal(ws, msg.session || 'yoursh')
+        spawnLocal(ws, { useTmux: msg.useTmux, session: msg.session })
         return
       }
       meta.mode = 'ssh'

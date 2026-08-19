@@ -4,5 +4,6 @@ export interface SshConfig {
   username: string
   password: string
   session?: string
+  useTmux?: boolean
   mode?: 'ssh' | 'agent' | 'local'
 }

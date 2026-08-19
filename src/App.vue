@@ -29,8 +29,8 @@ function move(id: number, x: number, y: number) { const w = windows.value.find((
 function resize(id: number, w: number, h: number) { const o = windows.value.find((p) => p.id === id); if (o) { o.w = w; o.h = h } }
 
 onMounted(() => {
-  // open one terminal immediately (local mode — the common phone case)
-  spawn({ mode: 'local', host: '', port: 22, username: '', password: '', session: 'yoursh' })
+  // open one terminal immediately (local shell — tmux is opt-in)
+  spawn({ mode: 'local', host: '', port: 22, username: '', password: '', session: 'yoursh', useTmux: false })
 })
 </script>
 

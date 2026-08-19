@@ -4,6 +4,7 @@ import type { SshConfig } from '../types'
 
 const emit = defineEmits<{ (e: 'connect', cfg: SshConfig): void }>()
 const mode = ref<'local' | 'phone' | 'ssh'>('local')
+const useTmux = ref(false)
 
 const form = reactive<SshConfig>({
   host: '',
@@ -20,7 +21,7 @@ const WSS = ORIGIN.replace(/^http/, 'ws')
 const cmd = `pkg install -y nodejs tmux util-linux && curl -s ${ORIGIN}/agent.js | node - ${pairId} ${WSS}`
 
 function connect() {
-  if (mode.value === 'local') emit('connect', { ...form, mode: 'local' })
+  if (mode.value === 'local') emit('connect', { ...form, mode: 'local', useTmux: useTmux.value, session: useTmux.value ? form.session : undefined })
   else if (mode.value === 'phone') emit('connect', { ...form, mode: 'agent', session: pairId })
   else emit('connect', { ...form, mode: 'ssh' })
 }
@@ -40,8 +41,9 @@ function copy() {
     </div>
 
     <template v-if="mode === 'local'">
-      <p>Runs tmux <b>on this device</b> and streams to your browser. No paste needed.</p>
-      <label>tmux session<input v-model="form.session" placeholder="yoursh" /></label>
+      <p>Runs a shell <b>on this device</b> and streams to your browser. tmux is optional.</p>
+      <label class="check"><input type="checkbox" v-model="useTmux" /> Launch inside tmux (persistent session)</label>
+      <label v-if="useTmux">tmux session<input v-model="form.session" placeholder="yoursh" /></label>
     </template>
 
     <template v-else-if="mode === 'phone'">
