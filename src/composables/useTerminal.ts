@@ -13,6 +13,7 @@ export function useTerminal(container: HTMLElement, config: SshConfig) {
   term.loadAddon(fit)
   term.open(container)
   fit.fit()
+  requestAnimationFrame(() => fit.fit())
 
   const ws = new WebSocket(WS_URL)
   ws.binaryType = 'arraybuffer'

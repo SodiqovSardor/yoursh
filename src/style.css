@@ -101,6 +101,19 @@ body {
 .term {
   position: absolute;
   inset: 0;
+  background: #000;
+}
+
+/* force xterm to stretch to the container */
+.term .xterm,
+.term .xterm-viewport,
+.term .xterm-screen {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.term .xterm-viewport {
+  overflow: hidden !important;
 }
 
 .disconnect {
